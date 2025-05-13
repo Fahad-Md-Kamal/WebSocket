@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FastAPI Chat</title>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+</head>
+
+<body>
+    <h1>FastAPI Chat</h1>
+    <div>
+        <input id="username" placeholder="Your name">
+        <input id="room" placeholder="Room name" value="general">
+        <button onclick="connect()">Join</button>
+    </div>
+    <div id="messages"></div>
+    <input id="messageInput" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io('http://localhost:8000', {
+            extraHeaders: {
+                Authorization: "Bearer 11713"
+            }
+        });
+        let currentRoom = 'general';
+
+        function connect() {
+            const username = document.getElementById('username').value;
+            currentRoom = document.getElementById('room').value;
+
+            socket.emit('register_user', { username });
+            socket.emit('join_room', { room: currentRoom });
+        }
+
+        function sendMessage() {
+            const text = document.getElementById('messageInput').value;
+            socket.emit('send_message', { room: currentRoom, text });
+            document.getElementById('messageInput').value = '';
+        }
+
+        // Event Listeners
+        socket.on('new_message', (data) => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<p>${data.username}:</strong> ${data.text}</p>`;
+            // messagesDiv.innerHTML += `<p><strong>[${data.room}] ${data.username}:</strong> ${data.text}</p>`;
+        });
+
+        socket.on('user_joined', (data) => {
+            console.log(`${data.username} joined ${data.room}`);
+        });
+
+        socket.on('user_left', (data) => {
+            console.log(`${data.username} left ${data.room}`);
+        });
+    </script>
+</body>
+
+</html>

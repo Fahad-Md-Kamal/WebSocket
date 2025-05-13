@@ -1,0 +1,13 @@
+[project]
+name = "chatter"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "aiohttp>=3.11.18",
+    "eventlet>=0.39.1",
+    "fastapi>=0.115.12",
+    "python-socketio>=5.13.0",
+    "uvicorn>=0.34.2",
+]
